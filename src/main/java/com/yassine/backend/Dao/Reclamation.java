@@ -17,7 +17,7 @@ public class Reclamation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idReclamation;
+    private int idReclamation;
 
     private Date date;
     private String description;

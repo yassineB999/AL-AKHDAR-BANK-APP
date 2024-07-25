@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
@@ -14,16 +15,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idRole;
+    private int idRole;
 
     private String libelle;
 
     @OneToMany(mappedBy = "role") @JsonIgnore
     private List<Utilisateur> utilisateurs;
 
+    @Override
+    public String getAuthority() {
+        return String.valueOf(idRole);
+    }
 }
 

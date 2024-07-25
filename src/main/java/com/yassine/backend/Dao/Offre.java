@@ -12,7 +12,7 @@ import java.sql.Date;
 public class Offre {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idOffre;
+    private int idOffre;
 
     private Date dateDebut;
     private String libelle;
