@@ -42,6 +42,7 @@ public class GestionUtilisateur implements UserDetailsService {
         newUser.setRole(gr.chercherRole(registrationRequest.getRole().getIdRole()));
         newUser.setNom(registrationRequest.getNom());
         newUser.setPrenom(registrationRequest.getPrenom());
+        newUser.setNumeroTelephone(registrationRequest.getNumeroTelephone());
         newUser.setAdresse(registrationRequest.getAdresse());
         newUser.setAge(registrationRequest.getAge());
         newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
