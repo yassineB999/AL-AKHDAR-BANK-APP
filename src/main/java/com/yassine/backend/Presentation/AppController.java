@@ -28,8 +28,11 @@ public class AppController {
     @PostMapping("/Authentifie")
     public @ResponseBody ResponseEntity<?> Authentifie(@RequestBody Utilisateur req){
         try {
+            System.out.println("TRRYING TO GENERATE TOKEN");
             String token = gestionUtilisateur.login(req);
+            System.out.println(token);
             Utilisateur u = gestionUtilisateur.findByEmail(req.getEmail());
+            System.out.println(u.getEmail());
             char roleChar = u.getRole().getLibelle().charAt(0);
 
             // Create a map to hold the response data

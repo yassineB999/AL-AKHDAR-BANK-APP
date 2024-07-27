@@ -34,18 +34,17 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("http://localhost:49430")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Authorization", "Content-Type", "Accept")
-                .maxAge(3600);
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/App/api/Inscrire", "/App/api/Authentifie").permitAll()
+                        .requestMatchers("/App/api/Authentifie").permitAll()
                         .requestMatchers("/App/api/client/**").hasAuthority(String.valueOf(Utils.ROLE_CLIENT))
                         .requestMatchers("/App/api/admin/**").hasAuthority(String.valueOf(Utils.ROLE_ADMIN))
                         .anyRequest().authenticated())
