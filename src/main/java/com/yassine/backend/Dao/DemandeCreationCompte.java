@@ -12,7 +12,7 @@ import java.sql.Date;
 public class DemandeCreationCompte {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idDemandeCreationCompte;
+    private Integer idDemandeCreationCompte;
 
     private Date date;
 

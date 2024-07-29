@@ -44,7 +44,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/App/api/Authentifie").permitAll()
+                        .requestMatchers("/App/api/Inscrire","/App/api/Authentifie").permitAll()
                         .requestMatchers("/App/api/client/**").hasAuthority(String.valueOf(Utils.ROLE_CLIENT))
                         .requestMatchers("/App/api/admin/**").hasAuthority(String.valueOf(Utils.ROLE_ADMIN))
                         .anyRequest().authenticated())

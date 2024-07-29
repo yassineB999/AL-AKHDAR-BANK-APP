@@ -19,7 +19,7 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idRole;
+    private Integer idRole;
 
     private String libelle;
 

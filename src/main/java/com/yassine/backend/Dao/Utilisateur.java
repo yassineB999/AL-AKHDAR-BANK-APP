@@ -22,20 +22,20 @@ public class Utilisateur implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idUtilisateur;
+    private Integer idUtilisateur;
 
     private String password;
     private String cin;
     private String nom;
     private String prenom;
-    private String numeroTelephone;
+    private String numerotelephone;
     @Column(unique = true)
     private String email;
-    private String Adresse;
-    private String Age;
+    private String adresse;
+    private String age;
 
 
-    @OneToOne
+    @OneToOne @JsonIgnore
     private DemandeCreationCompte demandecreationcompte;
     @ManyToOne
     private Role role;

@@ -31,6 +31,7 @@ public class GestionRole {
     }
 
     public Role chercherRole(int idRole) {
+        System.out.println(idRole);
         return IGR.findById(idRole).orElse(null);
     }
 

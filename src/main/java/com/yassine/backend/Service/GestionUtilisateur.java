@@ -2,6 +2,7 @@ package com.yassine.backend.Service;
 
 import com.yassine.backend.Dao.JWTUtils;
 import com.yassine.backend.Dao.Utilisateur;
+import com.yassine.backend.Dao.Utils;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,31 +36,17 @@ public class GestionUtilisateur implements UserDetailsService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public Utilisateur register(Utilisateur registrationRequest) {
-        System.out.println("User  getting set");
-        Utilisateur newUser = new Utilisateur();
-        newUser.setEmail(registrationRequest.getEmail());
-        newUser.setRole(gr.chercherRole(registrationRequest.getRole().getIdRole()));
-        newUser.setNom(registrationRequest.getNom());
-        newUser.setPrenom(registrationRequest.getPrenom());
-        newUser.setNumeroTelephone(registrationRequest.getNumeroTelephone());
-        newUser.setAdresse(registrationRequest.getAdresse());
-        newUser.setAge(registrationRequest.getAge());
-        newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        System.out.println("User set");
-        return u.save(newUser);
-    }
 
     public String login(Utilisateur loginRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        var user = u.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+        var user = u.findByEmail(loginRequest.getEmail());
         return jwtUtils.generateToken(user);
     }
 
     public String refreshToken(String refreshToken) {
         String email = jwtUtils.extractUsername(refreshToken);
-        var user = u.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        var user = u.findByEmail(email);
         if (jwtUtils.isTokenValid(refreshToken, user)) {
             return jwtUtils.generateToken(user);
         }
@@ -69,7 +56,7 @@ public class GestionUtilisateur implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return u.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return u.findByEmail(email);
     }
 
     // Get all users
@@ -98,19 +85,24 @@ public class GestionUtilisateur implements UserDetailsService {
     }
 
 
+    public boolean createUser(Utilisateur user){
+        try{
+            if(user == null) return false;
 
-    public Utilisateur addUser(Utilisateur user) {
-        Optional<Utilisateur> existingUser = u.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            throw new IllegalArgumentException("User with this email already exists");
-        } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return u.save(user);
+
+            user.setRole(gr.chercherRole(Utils.ROLE_CLIENT));
+            u.save(user);
+            return true;
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
     public Utilisateur findByEmail(String email){
-        return u.findByEmail(email).get();
+        return u.findByEmail(email);
     }
 
 
