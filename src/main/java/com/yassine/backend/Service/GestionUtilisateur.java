@@ -107,7 +107,7 @@ public class GestionUtilisateur implements UserDetailsService {
 
 
     // Delete user
-    public void deleteUser(Integer id) {
+    public void supprimerUtilisateur(Integer id) {
         u.deleteById(id);
     }
 }
