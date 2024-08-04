@@ -77,7 +77,6 @@ public class GestionUtilisateur implements UserDetailsService {
         user.setAdresse(userDetails.getAdresse());
         user.setAge(userDetails.getAge());
         user.setEmail(userDetails.getEmail());
-        user.setRole(userDetails.getRole());
         if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         }

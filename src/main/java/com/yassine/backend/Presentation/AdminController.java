@@ -112,31 +112,8 @@ public class AdminController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
         if (adminUser.getRole().getIdRole() == Utils.ROLE_ADMIN) {
-            Utilisateur userToUpdate = gestionUtilisateur.getUserById(idUser).orElse(null);
-            if (userToUpdate != null) {
-                try {
-                    userToUpdate.setCin(utilisateur.getCin());
-                    userToUpdate.setNom(utilisateur.getNom());
-                    userToUpdate.setPrenom(utilisateur.getPrenom());
-                    userToUpdate.setEmail(utilisateur.getEmail());
-                    userToUpdate.setNumerotelephone(utilisateur.getNumerotelephone());
-                    userToUpdate.setAdresse(utilisateur.getAdresse());
-                    userToUpdate.setAge(utilisateur.getAge());
-                    // Preserve the role if not explicitly set in the update request
-                    if (utilisateur.getRole() != null) {
-                        userToUpdate.setRole(utilisateur.getRole());
-                    }
-                    if (utilisateur.getPassword() != null && !utilisateur.getPassword().isEmpty()) {
-                        userToUpdate.setPassword(utilisateur.getPassword());
-                    }
-                    Utilisateur updatedUser = gestionUtilisateur.updateUser(idUser, userToUpdate);
-                    return ResponseEntity.ok(updatedUser);
-                } catch (Exception e) {
-                    return ResponseEntity.status(500).body("Error updating client: " + e.getMessage());
-                }
-            } else {
-                return ResponseEntity.status(403).body("Cannot update admin users or user not found");
-            }
+            Utilisateur updatedUser = gestionUtilisateur.updateUser(idUser, utilisateur);
+            return ResponseEntity.ok(updatedUser);
         } else {
             return ResponseEntity.status(403).body("Access denied");
         }
@@ -204,23 +181,9 @@ public class AdminController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
         if (adminUser.getRole().getIdRole() == Utils.ROLE_ADMIN) {
-            try {
-                adminUser.setNom(utilisateur.getNom());
-                adminUser.setPrenom(utilisateur.getPrenom());
-                adminUser.setNumerotelephone(utilisateur.getNumerotelephone());
-                adminUser.setAdresse(utilisateur.getAdresse());
-                adminUser.setEmail(utilisateur.getEmail());
-                adminUser.setAge(utilisateur.getAge());
-                adminUser.setCin(utilisateur.getCin());
 
-                if (utilisateur.getPassword() != null && !utilisateur.getPassword().isEmpty()) {
-                    adminUser.setPassword(utilisateur.getPassword());
-                }
-                Utilisateur updatedAdmin = gestionUtilisateur.updateUser(adminUser.getIdUtilisateur(), adminUser);
+                Utilisateur updatedAdmin = gestionUtilisateur.updateUser(adminUser.getIdUtilisateur(), utilisateur);
                 return ResponseEntity.ok(updatedAdmin);
-            } catch (Exception e) {
-                return ResponseEntity.status(500).body("Error updating profile: " + e.getMessage());
-            }
         } else {
             return ResponseEntity.status(403).body("Access denied");
         }
@@ -260,6 +223,23 @@ public class AdminController {
 
         return ResponseEntity.ok(demandeCount);
     }
+    @GetMapping("/DetailsDemandes/{idDemandes}")
+    public ResponseEntity<?> detailsDemandes(@PathVariable int idDemandes ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (adminUser == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        DemandeCreationCompte demandecreationcompte = gestionDemandeCreationCompte.chercherDemandeCreationCompte(idDemandes);
+        return ResponseEntity.ok(demandecreationcompte);
+    }
 
     @GetMapping("/ListReclamation")
     public @ResponseBody ResponseEntity<?> listReclamation() {
@@ -278,4 +258,162 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/TotalReclamation")
+    public ResponseEntity<?> totalReclamation() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (adminUser == null || adminUser.getRole() == null || adminUser.getRole().getIdRole() != Utils.ROLE_ADMIN) {
+            return ResponseEntity.status(403).body("Access denied or user/role not found");
+        }
+
+        long ReclamationCount = gestionReclamation.afficherReclamation().size();
+
+        return ResponseEntity.ok(ReclamationCount);
+    }
+
+    @GetMapping("/DetailsReclamation/{idReclamation}")
+    public ResponseEntity<?> detailsReclamation(@PathVariable int idReclamation ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (adminUser == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        Reclamation reclamations = gestionReclamation.chercherReclamation(idReclamation);
+
+        return ResponseEntity.ok(reclamations);
+    }
+
+
+    @GetMapping("/ListOffre")
+    public ResponseEntity<?> listOffres() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+        if (adminUser.getRole().getIdRole() == Utils.ROLE_ADMIN) {
+            List<Offre> offres = gestionOffre.afficherOffre();
+            return ResponseEntity.ok(offres);
+        } else {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+    }
+    @PostMapping("/addOffre")
+    public ResponseEntity<?> addOffre(@RequestBody Offre offre) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+        if (adminUser.getRole().getIdRole() == Utils.ROLE_ADMIN) {
+            try {
+                offre.setUtilisateur(adminUser); // Set the utilisateur field to the authenticated user
+                boolean isAdded = gestionOffre.ajouterOffre(offre);
+                if (isAdded) {
+                    return ResponseEntity.ok(offre);
+                } else {
+                    return ResponseEntity.status(400).body("Error adding offer");
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("Error adding offer: " + e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+    }
+
+
+    @PutMapping("/updateOffre/{idOffre}")
+    public ResponseEntity<?> updateOffre(@PathVariable int idOffre, @RequestBody Offre updatedOffre) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+        if (adminUser.getRole().getIdRole() == Utils.ROLE_ADMIN) {
+            Offre existingOffre = gestionOffre.chercherOffre(idOffre);
+            if (existingOffre != null) {
+                try {
+                    existingOffre.setDateDebut(updatedOffre.getDateDebut());
+                    existingOffre.setLibelle(updatedOffre.getLibelle());
+                    existingOffre.setDescription(updatedOffre.getDescription());
+                    existingOffre.setDateFin(updatedOffre.getDateFin());
+                    boolean isUpdated = gestionOffre.modifierOffre(existingOffre);
+                    if (isUpdated) {
+                        return ResponseEntity.ok(existingOffre);
+                    } else {
+                        return ResponseEntity.status(400).body("Error updating offer");
+                    }
+                } catch (Exception e) {
+                    return ResponseEntity.status(500).body("Error updating offer: " + e.getMessage());
+                }
+            } else {
+                return ResponseEntity.status(404).body("Offer not found");
+            }
+        } else {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+    }
+
+    @DeleteMapping("/deleteOffre/{idOffre}")
+    public ResponseEntity<?> deleteOffre(@PathVariable int idOffre) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+        if (adminUser.getRole().getIdRole() == Utils.ROLE_ADMIN) {
+            try {
+                boolean isDeleted = gestionOffre.supprimerOffre(idOffre);
+                if (isDeleted) {
+                    return ResponseEntity.ok("Offer deleted successfully");
+                } else {
+                    return ResponseEntity.status(404).body("Offer not found");
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body("Error deleting offer: " + e.getMessage());
+            }
+        } else {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+    }
+    @PostMapping("/TotalOffre")
+    public ResponseEntity<?> totalOffres() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (adminUser == null || adminUser.getRole() == null || adminUser.getRole().getIdRole() != Utils.ROLE_ADMIN) {
+            return ResponseEntity.status(403).body("Access denied or user/role not found");
+        }
+
+        long offreCount = gestionOffre.afficherOffre().size();
+
+        return ResponseEntity.ok(offreCount);
+    }
 }
