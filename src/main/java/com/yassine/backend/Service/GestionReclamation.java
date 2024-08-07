@@ -1,6 +1,7 @@
 package com.yassine.backend.Service;
 
 import com.yassine.backend.Dao.Reclamation;
+import com.yassine.backend.Dao.Utilisateur;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +36,9 @@ public class GestionReclamation {
 
     public List<Reclamation> afficherReclamation() {
         return IGR.findAll();
+    }
+
+    public  List<Reclamation> findAllByUtilisateur(Utilisateur utilisateur) {
+        return IGR.findAllByUtilisateur(utilisateur);
     }
 }

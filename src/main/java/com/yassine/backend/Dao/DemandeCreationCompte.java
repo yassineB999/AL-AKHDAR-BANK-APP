@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.sql.Date;
 
@@ -14,8 +15,14 @@ public class DemandeCreationCompte {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idDemandeCreationCompte;
 
-    private Date date;
+    private LocalDateTime date;
+
+    @PrePersist
+    public void prePersist() {
+        date = LocalDateTime.now();
+    }
 
     @OneToOne
     private Utilisateur utilisateur;
+
 }
