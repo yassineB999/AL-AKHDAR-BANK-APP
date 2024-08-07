@@ -1,9 +1,6 @@
 package com.yassine.backend.Presentation;
 
-import com.yassine.backend.Dao.DemandeCreationCompte;
-import com.yassine.backend.Dao.Reclamation;
-import com.yassine.backend.Dao.Utilisateur;
-import com.yassine.backend.Dao.Utils;
+import com.yassine.backend.Dao.*;
 import com.yassine.backend.Service.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 @RestController
 @RequestMapping("/App/api/client/")
@@ -96,4 +94,92 @@ public class ClientController {
             return ResponseEntity.status(403).body("Access denied");
         }
     }
+
+    @PostMapping("/SendReclamation")
+    public ResponseEntity<?> sendReclamation(@RequestBody Reclamation reclamation) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur clientUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+        if (clientUser == null || clientUser.getRole().getIdRole() != Utils.ROLE_CLIENT) {
+            return ResponseEntity.status(403).body("Unauthorized action");
+        }
+
+        reclamation.setUtilisateur(clientUser);
+        reclamation.setDate(new Date());
+
+        gestionReclamation.ajouterReclamation(reclamation);
+
+        return ResponseEntity.ok("Reclamation sent successfully");
+    }
+
+
+    @GetMapping("/ListReclamation")
+    public ResponseEntity<?> ListReclamation() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur user = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        if (user.getRole().getIdRole() != Utils.ROLE_CLIENT) {
+            return ResponseEntity.status(403).body("Unauthorized action");
+        }
+
+        List<Reclamation> reclamations = gestionReclamation.findAllByUtilisateur(user);
+
+        return ResponseEntity.ok(reclamations);
+    }
+
+
+    @GetMapping("/DetailsOffre/{idOffre}")
+    public ResponseEntity<?> detailsOffre(@PathVariable int idOffre) {
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         if (authentication == null) {
+             return ResponseEntity.status(401).body("No authenticated user found");
+         }
+
+         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+         Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+         if (adminUser == null) {
+             return ResponseEntity.status(404).body("User not found");
+         }
+
+         Offre offre = gestionOffre.chercherOffre(idOffre);
+
+         return ResponseEntity.ok(offre);
+     }
+
+    @GetMapping("/OffreName/{idOffre}")
+    public ResponseEntity<?> OffreName(@PathVariable int idOffre) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur user = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        Offre offre = gestionOffre.chercherOffre(idOffre);
+        if (offre == null) {
+            return ResponseEntity.status(404).body("Offer not found");
+        }
+
+        return ResponseEntity.ok(offre.getLibelle());
+    }
+
 }
