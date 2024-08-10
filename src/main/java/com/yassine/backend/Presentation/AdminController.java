@@ -2,6 +2,7 @@ package com.yassine.backend.Presentation;
 
 import com.yassine.backend.Dao.*;
 import com.yassine.backend.Service.*;
+import com.yassine.backend.enumerations.ReclamationStatusEnum;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -415,5 +417,53 @@ public class AdminController {
         long offreCount = gestionOffre.afficherOffre().size();
 
         return ResponseEntity.ok(offreCount);
+    }
+
+    @PutMapping("/updatestatus/{idReclamation}")
+    public ResponseEntity<?> updateReclamationStatus(
+            @PathVariable Integer idReclamation,
+            @RequestBody Map<String, String> request) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return ResponseEntity.status(401).body("No authenticated user found");
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Utilisateur adminUser = gestionUtilisateur.findByEmail(userDetails.getUsername());
+
+        if (adminUser == null) {
+            return ResponseEntity.status(403).body("Unauthorized action: User not found");
+        }
+
+        if (adminUser.getRole().getIdRole() != Utils.ROLE_ADMIN) {
+            return ResponseEntity.status(403).body("Unauthorized action: User does not have admin role");
+        }
+
+        Reclamation reclamation = gestionReclamation.chercherReclamation(idReclamation);
+        if (reclamation == null) {
+            return ResponseEntity.status(404).body("Reclamation not found");
+        }
+
+        String newStatusStr = request.get("newStatus");
+        if (newStatusStr == null) {
+            return ResponseEntity.status(400).body("newStatus is required");
+        }
+
+        ReclamationStatusEnum newStatus;
+        try {
+            newStatus = ReclamationStatusEnum.valueOf(newStatusStr);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body("Invalid status");
+        }
+
+        reclamation.setStatus(newStatus.toString());
+        boolean isUpdated = gestionReclamation.modifierReclamation(reclamation);
+
+        if (isUpdated) {
+            return ResponseEntity.ok("Reclamation status updated successfully");
+        } else {
+            return ResponseEntity.status(500).body("Failed to update reclamation status");
+        }
     }
 }

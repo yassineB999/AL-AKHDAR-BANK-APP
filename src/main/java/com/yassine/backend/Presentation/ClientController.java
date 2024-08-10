@@ -2,6 +2,7 @@ package com.yassine.backend.Presentation;
 
 import com.yassine.backend.Dao.*;
 import com.yassine.backend.Service.*;
+import com.yassine.backend.enumerations.ReclamationStatusEnum;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 @RestController
 @RequestMapping("/App/api/client/")
@@ -109,7 +110,8 @@ public class ClientController {
         }
 
         reclamation.setUtilisateur(clientUser);
-        reclamation.setDate(new Date());
+        reclamation.setDate(new Date(System.currentTimeMillis()));
+        reclamation.setStatus(ReclamationStatusEnum.EN_COURS_DE_TRAITEMENT.toString());
 
         gestionReclamation.ajouterReclamation(reclamation);
 
@@ -160,7 +162,7 @@ public class ClientController {
          return ResponseEntity.ok(offre);
      }
 
-    @GetMapping("/OffreName/{idOffre}")
+  /*  @GetMapping("/OffreName/{idOffre}")
     public ResponseEntity<?> OffreName(@PathVariable int idOffre) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
@@ -174,12 +176,25 @@ public class ClientController {
             return ResponseEntity.status(404).body("User not found");
         }
 
+        // Check if the user has the required role/permissions
+        if (user.getRole().getIdRole() != Utils.ROLE_CLIENT) {
+            return ResponseEntity.status(403).body("Access denied");
+        }
+
         Offre offre = gestionOffre.chercherOffre(idOffre);
         if (offre == null) {
             return ResponseEntity.status(404).body("Offer not found");
         }
 
         return ResponseEntity.ok(offre.getLibelle());
+    }*/
+
+    @GetMapping("/allOffres")
+    public ResponseEntity<List<Offre>> getAllOffres() {
+        List<Offre> offres = gestionOffre.afficherOffre();
+        return ResponseEntity.ok(offres);
     }
+
+
 
 }
