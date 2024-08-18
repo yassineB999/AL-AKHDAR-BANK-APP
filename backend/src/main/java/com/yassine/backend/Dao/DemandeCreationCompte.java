@@ -22,7 +22,7 @@ public class DemandeCreationCompte {
         date = LocalDateTime.now();
     }
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     private Utilisateur utilisateur;
 
 }

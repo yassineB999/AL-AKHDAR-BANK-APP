@@ -12,11 +12,11 @@ class _ReclamationPageState extends State<ReclamationPage> {
   final _descriptionController = TextEditingController();
   String? _selectedReclamationType;
   final List<String> _reclamationTypes = [
-    'Card Problem',
-    'Account Issue',
-    'Loan Inquiry',
-    'Transaction Dispute',
-    'Other'
+    'Problème de carte',
+    'Problème de compte',
+    'Demande de prêt',
+    'Litige de transaction',
+    'Autre'
   ];
 
   @override
@@ -44,23 +44,23 @@ class _ReclamationPageState extends State<ReclamationPage> {
         date: DateTime.now().toIso8601String(), // Use the current date/time
         description: _descriptionController.text,
         type: _selectedReclamationType!,
-        status: "Pending", // Default status for a new reclamation
+        status: "En attente", // Default status for a new reclamation
         utilisateur: currentUser, // Pass the current user object
       );
 
       try {
         await ClientService.sendReclamation(reclamation);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Reclamation submitted successfully!')),
+          SnackBar(content: Text('Réclamation soumise avec succès !')),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit reclamation: $e')),
+          SnackBar(content: Text('Échec de la soumission de la réclamation : $e')),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill all fields')),
+        SnackBar(content: Text('Veuillez remplir tous les champs')),
       );
     }
   }
@@ -76,7 +76,7 @@ class _ReclamationPageState extends State<ReclamationPage> {
             Navigator.of(context).pop();
           },
         ),
-        title: Text('Reclamation'),
+        title: Text('Réclamation'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,12 +93,12 @@ class _ReclamationPageState extends State<ReclamationPage> {
               maxLines: 4,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Enter your description',
+                hintText: 'Entrez votre description',
               ),
             ),
             SizedBox(height: 16),
             Text(
-              'Type of Reclamation',
+              'Type de réclamation',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
@@ -117,7 +117,7 @@ class _ReclamationPageState extends State<ReclamationPage> {
                   .toList(),
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Select reclamation type',
+                hintText: 'Sélectionnez le type de réclamation',
               ),
             ),
             Spacer(),
@@ -130,7 +130,7 @@ class _ReclamationPageState extends State<ReclamationPage> {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   textStyle: TextStyle(fontSize: 18),
                 ),
-                child: Text('Submit'),
+                child: Text('Soumettre'),
               ),
             ),
           ],

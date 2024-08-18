@@ -13,7 +13,7 @@ class _HomeAdminState extends State<HomeAdmin> {
   int totalClients = 0;
   int totalOffres = 0;
   int totalReclamations = 0;
-  int totalDemande = 0; // New variable to store total demands
+  int totalDemande = 0; // Nouvelle variable pour stocker le nombre total de demandes
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _HomeAdminState extends State<HomeAdmin> {
     _fetchTotalClients();
     _fetchTotalOffres();
     _fetchTotalReclamations();
-    _fetchTotalDemande(); // Fetch total demands on init
+    _fetchTotalDemande(); // Récupérer le nombre total de demandes lors de l'initialisation
   }
 
   Future<void> _fetchTotalClients() async {
@@ -31,7 +31,7 @@ class _HomeAdminState extends State<HomeAdmin> {
         totalClients = clients;
       });
     } catch (e) {
-      print('Failed to fetch total clients: $e');
+      print('Échec de la récupération du nombre total de clients : $e');
     }
   }
 
@@ -42,7 +42,7 @@ class _HomeAdminState extends State<HomeAdmin> {
         totalOffres = offres;
       });
     } catch (e) {
-      print('Failed to fetch total offers: $e');
+      print('Échec de la récupération du nombre total d\'offres : $e');
     }
   }
 
@@ -53,18 +53,18 @@ class _HomeAdminState extends State<HomeAdmin> {
         totalReclamations = reclamations;
       });
     } catch (e) {
-      print('Failed to fetch total reclamations: $e');
+      print('Échec de la récupération du nombre total de réclamations : $e');
     }
   }
 
   Future<void> _fetchTotalDemande() async {
     try {
-      int demandes = await AdminService.getTotalDemandes(); // Fetch the total demands
+      int demandes = await AdminService.getTotalDemandes(); // Récupérer le nombre total de demandes
       setState(() {
         totalDemande = demandes;
       });
     } catch (e) {
-      print('Failed to fetch total demands: $e');
+      print('Échec de la récupération du nombre total de demandes : $e');
     }
   }
 
@@ -77,7 +77,7 @@ class _HomeAdminState extends State<HomeAdmin> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.green,
           elevation: 2,
           titleSpacing: 0,
           leading: isLargeScreen
@@ -89,10 +89,16 @@ class _HomeAdminState extends State<HomeAdmin> {
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Image.asset(
+                  'assets/images/1.png',
+                  height: 40, // Ajuster la taille du logo
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 16), // Ajouter un espace entre le logo et le texte
                 const Text(
-                  "Admin Dashboard",
+                  "",
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -117,21 +123,20 @@ class _HomeAdminState extends State<HomeAdmin> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Welcome to the Admin Dashboard!",
+                  "",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
                 Text(
-                  "Use the navigation menu to manage clients, view offers, "
-                      "handle reclamations, and more.",
+                  "",
                   style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 40),
                 _buildDashboardCard("Total Clients", totalClients.toString()),
-                _buildDashboardCard("Total Offers", totalOffres.toString()),
-                _buildDashboardCard("Total Reclamations", totalReclamations.toString()),
-                _buildDashboardCard("Total Demands", totalDemande.toString()), // New card for total demands
+                _buildDashboardCard("Total Offres", totalOffres.toString()),
+                _buildDashboardCard("Total Réclamations", totalReclamations.toString()),
+                _buildDashboardCard("Total Demandes", totalDemande.toString()), // Nouvelle carte pour le nombre total de demandes
               ],
             ),
           ),
@@ -145,11 +150,11 @@ class _HomeAdminState extends State<HomeAdmin> {
       children: [
         DrawerHeader(
           decoration: BoxDecoration(
-            color: Colors.blueAccent,
+            color: Colors.green,
           ),
           child: Center(
             child: Text(
-              'Admin Menu',
+              'Menu Admin',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -178,8 +183,7 @@ class _HomeAdminState extends State<HomeAdmin> {
           _handleNavigation(context, item);
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 24.0, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16),
           child: Text(
             item,
             style: const TextStyle(fontSize: 18, color: Colors.white),
@@ -192,22 +196,22 @@ class _HomeAdminState extends State<HomeAdmin> {
 
   void _handleNavigation(BuildContext context, String item) {
     switch (item) {
-      case 'List Client':
+      case 'Liste Clients':
         Navigator.pushNamed(context, '/manageclients');
         break;
-      case 'List Offre':
+      case 'Liste Offres':
         Navigator.pushNamed(context, '/manageoffre');
         break;
-      case 'List Reclamation':
+      case 'Liste Réclamations':
         Navigator.pushNamed(context, '/managereclamation');
         break;
-      case 'List Demande':
+      case 'Liste Demandes':
         Navigator.pushNamed(context, '/managedemande');
         break;
-      case 'Profile':
+      case 'Profil':
         Navigator.pushNamed(context, '/profile');
         break;
-    // Add more cases for other items if needed
+    // Ajouter plus de cas pour d'autres éléments si nécessaire
     }
   }
 
@@ -220,7 +224,7 @@ class _HomeAdminState extends State<HomeAdmin> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.group, size: 40, color: Colors.blueAccent),
+            Icon(Icons.group, size: 40, color: Colors.green),
             SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +235,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                 ),
                 Text(
                   value,
-                  style: TextStyle(fontSize: 30, color: Colors.blueAccent),
+                  style: TextStyle(fontSize: 30, color: Colors.green),
                 ),
               ],
             ),
@@ -243,11 +247,11 @@ class _HomeAdminState extends State<HomeAdmin> {
 }
 
 final List<String> _menuItems = <String>[
-  'Dashboard',
-  'List Client',
-  'List Offre',
-  'List Reclamation',
-  'List Demande',
+  'Tableau de bord',
+  'Liste Clients',
+  'Liste Offres',
+  'Liste Réclamations',
+  'Liste Demandes',
 ];
 
 enum Menu { profile, signOut }
@@ -266,7 +270,7 @@ class _ProfileIcon extends StatelessWidget {
             Navigator.pushNamed(context, '/profile');
             break;
           case Menu.signOut:
-          // Handle sign out
+          // Gérer la déconnexion
             await Provider.of<AuthProvider>(context, listen: false).signOut();
             Navigator.pushNamedAndRemoveUntil(context, '/auth', (route) => false);
             break;
@@ -275,11 +279,11 @@ class _ProfileIcon extends StatelessWidget {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
         const PopupMenuItem<Menu>(
           value: Menu.profile,
-          child: Text('Profile'),
+          child: Text('Profil'),
         ),
         const PopupMenuItem<Menu>(
           value: Menu.signOut,
-          child: Text('Sign Out'),
+          child: Text('Déconnexion'),
         ),
       ],
     );

@@ -31,7 +31,7 @@ class _ManageReclamationState extends State<ManageReclamation> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Reclamation Details'),
+          title: Text('Détails de la Réclamation'),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -40,20 +40,20 @@ class _ManageReclamationState extends State<ManageReclamation> {
                 _buildDetailRow('Date', reclamation.date.split('T')[0]), // Format date if necessary
                 _buildDetailRow('Description', reclamation.description),
                 _buildDetailRow('Type', reclamation.type),
-                _buildDetailRow('Status', reclamation.status),
+                _buildDetailRow('Statut', reclamation.status),
                 SizedBox(height: 10),
-                Text('User Details', style: TextStyle(fontWeight: FontWeight.bold)),
-                _buildDetailRow('User ID', reclamation.utilisateur.idUtilisateur.toString()),
-                _buildDetailRow('Name', '${reclamation.utilisateur.nom} ${reclamation.utilisateur.prenom}'),
+                Text('Détails de l\'Utilisateur', style: TextStyle(fontWeight: FontWeight.bold)),
+                _buildDetailRow('ID Utilisateur', reclamation.utilisateur.idUtilisateur.toString()),
+                _buildDetailRow('Nom', '${reclamation.utilisateur.nom} ${reclamation.utilisateur.prenom}'),
                 _buildDetailRow('Email', reclamation.utilisateur.email),
-                _buildDetailRow('Phone Number', reclamation.utilisateur.numerotelephone),
+                _buildDetailRow('Numéro de Téléphone', reclamation.utilisateur.numerotelephone),
               ],
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close'),
+              child: Text('Fermer'),
             ),
           ],
         );
@@ -105,11 +105,11 @@ class _ManageReclamationState extends State<ManageReclamation> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Status updated successfully')),
+        SnackBar(content: Text('Statut mis à jour avec succès')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update status: $e')),
+        SnackBar(content: Text('Échec de la mise à jour du statut: $e')),
       );
     }
   }
@@ -118,7 +118,7 @@ class _ManageReclamationState extends State<ManageReclamation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Reclamations'),
+        title: Text('Gérer les Réclamations'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -132,9 +132,9 @@ class _ManageReclamationState extends State<ManageReclamation> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text('Erreur: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No reclamations available.'));
+                    return Center(child: Text('Aucune réclamation disponible.'));
                   } else {
                     return _buildReclamationTable(_filteredReclamations);
                   }
@@ -157,7 +157,7 @@ class _ManageReclamationState extends State<ManageReclamation> {
             DataColumn(label: Text('Date')),
             DataColumn(label: Text('Description')),
             DataColumn(label: Text('Type')),
-            DataColumn(label: Text('Status')),
+            DataColumn(label: Text('Statut')),
             DataColumn(label: Text('Actions')),
           ],
           rows: reclamations.map((reclamation) {
@@ -186,12 +186,15 @@ class _ManageReclamationState extends State<ManageReclamation> {
                       _updateReclamationStatus(reclamation, newStatus);
                     }
                   },
-                  hint: Text('Select Status'),
+                  hint: Text('Sélectionner un statut'),
                 ),
               ),
               DataCell(ElevatedButton(
                 onPressed: () => _showReclamationDetails(reclamation),
-                child: Text('View Details'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green, // Button color set to green
+                ),
+                child: Text('Voir les détails'),
               )),
             ]);
           }).toList(),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/Utilisateur.dart';
 import 'package:frontend/services/AdminService.dart';
 
-
 class ManageClient extends StatefulWidget {
   @override
   _ManageClientState createState() => _ManageClientState();
@@ -61,7 +60,7 @@ class _ManageClientState extends State<ManageClient> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(client == null ? 'Add Client' : 'Update Client'),
+          title: Text(client == null ? 'Ajouter un Client' : 'Modifier un Client'),
           content: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -70,15 +69,15 @@ class _ManageClientState extends State<ManageClient> {
                 children: [
                   _buildTextField(controller: _cinController, label: 'CIN'),
                   _buildTextField(controller: _nomController, label: 'Nom'),
-                  _buildTextField(controller: _prenomController, label: 'Prenom'),
+                  _buildTextField(controller: _prenomController, label: 'Prénom'),
                   _buildTextField(controller: _emailController, label: 'Email', keyboardType: TextInputType.emailAddress),
                   _buildTextField(controller: _telephoneController, label: 'Téléphone'),
                   _buildTextField(controller: _adresseController, label: 'Adresse'),
-                  _buildTextField(controller: _ageController, label: 'Age'),
+                  _buildTextField(controller: _ageController, label: 'Âge'),
                   if (client == null)
                     _buildTextField(
                       controller: _passwordController,
-                      label: 'Password',
+                      label: 'Mot de passe',
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: true,
                     ),
@@ -89,7 +88,7 @@ class _ManageClientState extends State<ManageClient> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: Text('Annuler'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -116,7 +115,10 @@ class _ManageClientState extends State<ManageClient> {
                   _fetchClients();
                 }
               },
-              child: Text(client == null ? 'Add' : 'Update'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Button color set to green
+              ),
+              child: Text(client == null ? 'Ajouter' : 'Modifier'),
             ),
           ],
         );
@@ -133,7 +135,7 @@ class _ManageClientState extends State<ManageClient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Clients'),
+        title: Text('Gérer les Clients'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -146,7 +148,7 @@ class _ManageClientState extends State<ManageClient> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      labelText: 'Search by Email',
+                      labelText: 'Rechercher par Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -155,9 +157,9 @@ class _ManageClientState extends State<ManageClient> {
                 ElevatedButton(
                   onPressed: () => _showClientDialog(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.green, // Button color set to green
                   ),
-                  child: Text('Add Client'),
+                  child: Text('Ajouter un Client'),
                 ),
               ],
             ),
@@ -169,9 +171,9 @@ class _ManageClientState extends State<ManageClient> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text('Erreur : ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No clients available.'));
+                    return Center(child: Text('Aucun client disponible.'));
                   } else {
                     return _buildClientTable(_filteredClients);
                   }
@@ -189,16 +191,21 @@ class _ManageClientState extends State<ManageClient> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.green), // Border color set to green
+            borderRadius: BorderRadius.circular(10),
+          ),
+          columnSpacing: 16.0,
           columns: const [
-            DataColumn(label: Text('ID')),
-            DataColumn(label: Text('CIN')),
-            DataColumn(label: Text('Nom')),
-            DataColumn(label: Text('Prenom')),
-            DataColumn(label: Text('Email')),
-            DataColumn(label: Text('Téléphone')),
-            DataColumn(label: Text('Adresse')),
-            DataColumn(label: Text('Age')),
-            DataColumn(label: Text('Actions')),
+            DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('CIN', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Nom', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Prénom', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Email', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Téléphone', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Adresse', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Âge', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold))),
           ],
           rows: clients.map((client) {
             return DataRow(cells: [
@@ -213,11 +220,11 @@ class _ManageClientState extends State<ManageClient> {
               DataCell(Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: Icon(Icons.edit, color: Colors.blue),
                     onPressed: () => _showClientDialog(client: client),
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () => _deleteClient(client.idUtilisateur),
                   ),
                 ],
@@ -247,7 +254,7 @@ class _ManageClientState extends State<ManageClient> {
         obscureText: obscureText,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter $label';
+            return 'Veuillez entrer $label';
           }
           return null;
         },

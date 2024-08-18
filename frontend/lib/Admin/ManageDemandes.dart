@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/DemandeCreationCompte.dart';
 import 'package:frontend/services/AdminService.dart';
 
-
 class ManageDemande extends StatefulWidget {
   @override
   _ManageDemandeState createState() => _ManageDemandeState();
@@ -51,12 +50,12 @@ class _ManageDemandeState extends State<ManageDemande> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Error'),
+          title: Text('Erreur'),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close'),
+              child: Text('Fermer'),
             ),
           ],
         );
@@ -68,7 +67,7 @@ class _ManageDemandeState extends State<ManageDemande> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Demandes'),
+        title: Text('Gérer les Demandes'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -85,9 +84,9 @@ class _ManageDemandeState extends State<ManageDemande> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text('Erreur: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No demandes available.'));
+                    return Center(child: Text('Aucune demande disponible.'));
                   } else {
                     return Center(
                       child: SingleChildScrollView(
@@ -96,7 +95,7 @@ class _ManageDemandeState extends State<ManageDemande> {
                           columns: const [
                             DataColumn(label: Text('ID')),
                             DataColumn(label: Text('Date')),
-                            DataColumn(label: Text('User')),
+                            DataColumn(label: Text('Utilisateur')),
                             DataColumn(label: Text('Actions')),
                           ],
                           rows: _filteredDemandes.map((demande) {
@@ -106,11 +105,11 @@ class _ManageDemandeState extends State<ManageDemande> {
                               DataCell(Text('${demande.utilisateur.nom} ${demande.utilisateur.prenom}')),
                               DataCell(ElevatedButton(
                                 onPressed: () => _showDemandeDetails(demande),
-                                child: Text('View Details'),
+                                child: Text('Voir les Détails'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blueAccent, // Button color
-                                  foregroundColor: Colors.white, // Text color
-                                  textStyle: TextStyle(fontWeight: FontWeight.bold), // Text style
+                                  backgroundColor: Colors.green, // Couleur du bouton définie en vert
+                                  foregroundColor: Colors.white, // Couleur du texte
+                                  textStyle: TextStyle(fontWeight: FontWeight.bold), // Style du texte
                                 ),
                               )),
                             ]);
@@ -137,7 +136,7 @@ class DemandeDetailsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Demande Details'),
+      title: Text('Détails de la Demande'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -145,18 +144,18 @@ class DemandeDetailsDialog extends StatelessWidget {
             _buildDetailRow('ID', demande.idDemandeCreationCompte.toString()),
             _buildDetailRow('Date', demande.date),
             SizedBox(height: 10),
-            Text('User Details', style: TextStyle(fontWeight: FontWeight.bold)),
-            _buildDetailRow('User ID', demande.utilisateur.idUtilisateur.toString()),
-            _buildDetailRow('Name', '${demande.utilisateur.nom} ${demande.utilisateur.prenom}'),
+            Text('Détails de l\'Utilisateur', style: TextStyle(fontWeight: FontWeight.bold)),
+            _buildDetailRow('ID Utilisateur', demande.utilisateur.idUtilisateur.toString()),
+            _buildDetailRow('Nom', '${demande.utilisateur.nom} ${demande.utilisateur.prenom}'),
             _buildDetailRow('Email', demande.utilisateur.email),
-            _buildDetailRow('Phone Number', demande.utilisateur.numerotelephone),
+            _buildDetailRow('Numéro de Téléphone', demande.utilisateur.numerotelephone),
           ],
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Close'),
+          child: Text('Fermer'),
         ),
       ],
     );

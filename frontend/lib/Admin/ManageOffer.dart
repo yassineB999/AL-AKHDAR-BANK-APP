@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/AdminService.dart';
 import '../models/Offre.dart';
-import 'package:intl/intl.dart'; // Import the intl package
+import 'package:intl/intl.dart'; // Importation du package intl
 
 class ManageOffre extends StatefulWidget {
   @override
@@ -72,7 +72,7 @@ class _ManageOffreState extends State<ManageOffre> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(offre == null ? 'Add Offer' : 'Update Offer'),
+          title: Text(offre == null ? 'Ajouter une Offre' : 'Modifier une Offre'),
           content: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -84,11 +84,11 @@ class _ManageOffreState extends State<ManageOffre> {
                     child: AbsorbPointer(
                       child: _buildTextField(
                         controller: _dateDebutController,
-                        label: 'Date Debut',
+                        label: 'Date Début',
                       ),
                     ),
                   ),
-                  _buildTextField(controller: _libelleController, label: 'Libelle'),
+                  _buildTextField(controller: _libelleController, label: 'Libellé'),
                   _buildTextField(controller: _descriptionController, label: 'Description'),
                   GestureDetector(
                     onTap: () => _selectDate(context, _dateFinController),
@@ -106,7 +106,7 @@ class _ManageOffreState extends State<ManageOffre> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: Text('Annuler'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -129,7 +129,10 @@ class _ManageOffreState extends State<ManageOffre> {
                   _fetchOffres();
                 }
               },
-              child: Text(offre == null ? 'Add' : 'Update'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Couleur du bouton définie en vert
+              ),
+              child: Text(offre == null ? 'Ajouter' : 'Modifier'),
             ),
           ],
         );
@@ -146,7 +149,7 @@ class _ManageOffreState extends State<ManageOffre> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Offers'),
+        title: Text('Gérer les Offres'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -159,7 +162,7 @@ class _ManageOffreState extends State<ManageOffre> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      labelText: 'Search by Libelle',
+                      labelText: 'Rechercher par Libellé',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -168,9 +171,9 @@ class _ManageOffreState extends State<ManageOffre> {
                 ElevatedButton(
                   onPressed: () => _showOffreDialog(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.green, // Couleur du bouton définie en vert
                   ),
-                  child: Text('Add Offer'),
+                  child: Text('Ajouter une Offre'),
                 ),
               ],
             ),
@@ -182,9 +185,9 @@ class _ManageOffreState extends State<ManageOffre> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text('Erreur : ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No offers available.'));
+                    return Center(child: Text('Aucune offre disponible.'));
                   } else {
                     return _buildOffreTable(_filteredOffres);
                   }
@@ -202,13 +205,18 @@ class _ManageOffreState extends State<ManageOffre> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.green), // Définir la couleur de la bordure en vert
+            borderRadius: BorderRadius.circular(10),
+          ),
+          columnSpacing: 16.0,
           columns: const [
-            DataColumn(label: Text('ID')),
-            DataColumn(label: Text('Date Debut')),
-            DataColumn(label: Text('Libelle')),
-            DataColumn(label: Text('Description')),
-            DataColumn(label: Text('Date Fin')),
-            DataColumn(label: Text('Actions')),
+            DataColumn(label: Text('ID', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Date Début', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Libellé', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Description', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Date Fin', style: TextStyle(fontWeight: FontWeight.bold))),
+            DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold))),
           ],
           rows: offres.map((offre) {
             return DataRow(cells: [
@@ -220,11 +228,11 @@ class _ManageOffreState extends State<ManageOffre> {
               DataCell(Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: Icon(Icons.edit, color: Colors.blue),
                     onPressed: () => _showOffreDialog(offre: offre),
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () => _deleteOffre(offre.idOffre),
                   ),
                 ],
@@ -254,7 +262,7 @@ class _ManageOffreState extends State<ManageOffre> {
         obscureText: obscureText,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter $label';
+            return 'Veuillez entrer $label';
           }
           return null;
         },

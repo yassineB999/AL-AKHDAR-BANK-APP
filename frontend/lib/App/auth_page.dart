@@ -35,13 +35,13 @@ class _AuthPageState extends State<AuthPage> {
         } else {
           // Handle unexpected role or missing role
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Unexpected role: $role')),
+            SnackBar(content: Text('Rôle inattendu : $role')),
           );
         }
       } catch (error) {
         // Handle login error
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $error')),
+          SnackBar(content: Text('Échec de la connexion : $error')),
         );
       }
     }
@@ -80,14 +80,14 @@ class _AuthPageState extends State<AuthPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        "Welcome to Al AkhdarBank",
+                        "Bienvenue à Al AkhdarBank",
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: 20), // Smaller font size
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        "Enter your email and password to continue.",
+                        "Entrez votre email et mot de passe pour continuer.",
                         style: Theme.of(context).textTheme.bodySmall,
                         textAlign: TextAlign.center,
                       ),
@@ -97,21 +97,21 @@ class _AuthPageState extends State<AuthPage> {
                       controller: _emailController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Veuillez entrer un texte';
                         }
 
                         bool emailValid = RegExp(
                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                             .hasMatch(value);
                         if (!emailValid) {
-                          return 'Please enter a valid email';
+                          return 'Veuillez entrer un email valide';
                         }
 
                         return null;
                       },
                       decoration: const InputDecoration(
                         labelText: 'Email',
-                        hintText: 'Enter your email',
+                        hintText: 'Entrez votre email',
                         prefixIcon: Icon(Icons.email_outlined),
                         border: OutlineInputBorder(),
                       ),
@@ -121,18 +121,18 @@ class _AuthPageState extends State<AuthPage> {
                       controller: _passwordController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
+                          return 'Veuillez entrer un texte';
                         }
 
                         if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
+                          return 'Le mot de passe doit comporter au moins 6 caractères';
                         }
                         return null;
                       },
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
+                          labelText: 'Mot de passe',
+                          hintText: 'Entrez votre mot de passe',
                           prefixIcon: const Icon(Icons.lock_outline_rounded),
                           border: const OutlineInputBorder(),
                           suffixIcon: IconButton(
@@ -155,7 +155,7 @@ class _AuthPageState extends State<AuthPage> {
                           _rememberMe = value;
                         });
                       },
-                      title: const Text('Remember me'),
+                      title: const Text('Se souvenir de moi'),
                       controlAffinity: ListTileControlAffinity.leading,
                       dense: true,
                       contentPadding: const EdgeInsets.all(0),
@@ -172,7 +172,7 @@ class _AuthPageState extends State<AuthPage> {
                         child: const Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Text(
-                            'Sign in',
+                            'Se connecter',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),
@@ -183,12 +183,12 @@ class _AuthPageState extends State<AuthPage> {
                     _gap(),
                     TextButton(
                       onPressed: _navigateToRegister,
-                      child: Text("Don't have an account? Register"),
+                      child: Text("Vous n'avez pas de compte ? Inscrivez-vous"),
                     ),
                     _gap(),
                     TextButton(
                       onPressed: _navigateToHome,
-                      child: Text("Return to Home"),
+                      child: Text("Retour à l'accueil"),
                     ),
                   ],
                 ),

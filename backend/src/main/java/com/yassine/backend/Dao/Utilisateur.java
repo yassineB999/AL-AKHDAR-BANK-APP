@@ -35,13 +35,13 @@ public class Utilisateur implements UserDetails {
     private String age;
 
 
-    @OneToOne @JsonIgnore
+    @OneToOne(cascade = CascadeType.REMOVE) @JsonIgnore
     private DemandeCreationCompte demandecreationcompte;
     @ManyToOne
     private Role role;
     @OneToMany(mappedBy = "utilisateur") @JsonIgnore
     private List<Offre> offres;
-    @OneToMany(mappedBy = "utilisateur") @JsonIgnore
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.REMOVE) @JsonIgnore
     private List<Reclamation> reclamations;
 
     @Override @JsonIgnore

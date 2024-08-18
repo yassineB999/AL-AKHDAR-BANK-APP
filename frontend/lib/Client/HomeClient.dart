@@ -38,9 +38,11 @@ class _HomeClientState extends State<HomeClient> {
       });
       _showPopup();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load profile: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+          SnackBar(content: Text('Échec du chargement du profil : $e')),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -53,17 +55,17 @@ class _HomeClientState extends State<HomeClient> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Profile Information'),
+          title: Text('Informations du profil'),
           content: _user != null
               ? Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Name: ${_user!.nom} ${_user!.prenom}'),
-              Text('Email: ${_user!.email}'),
-              Text('Phone: ${_user!.numerotelephone}'),
-              Text('Address: ${_user!.adresse}'),
-              Text('CIN: ${_user!.cin}'),
+              Text('Nom : ${_user!.nom} ${_user!.prenom}'),
+              Text('Email : ${_user!.email}'),
+              Text('Téléphone : ${_user!.numerotelephone}'),
+              Text('Adresse : ${_user!.adresse}'),
+              Text('CIN : ${_user!.cin}'),
               if (_hasSentRequest)
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
@@ -79,7 +81,7 @@ class _HomeClientState extends State<HomeClient> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
-                    'You have one more chance to confirm before sending the request.',
+                    'Vous avez une dernière chance de confirmer avant d\'envoyer la demande.',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
@@ -88,14 +90,14 @@ class _HomeClientState extends State<HomeClient> {
                 ),
             ],
           )
-              : Text('Failed to load profile information.'),
+              : Text('Échec du chargement des informations du profil.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.pushNamed(context, '/profile');
               },
-              child: Text('No'),
+              child: Text('Non'),
             ),
             if (!_hasSentRequest)
               TextButton(
@@ -103,13 +105,13 @@ class _HomeClientState extends State<HomeClient> {
                   Navigator.of(context).pop();
                   _confirmSendDemande();
                 },
-                child: Text('Yes'),
+                child: Text('Oui'),
               ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text('Annuler'),
             ),
           ],
         );
@@ -122,15 +124,15 @@ class _HomeClientState extends State<HomeClient> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Confirm Request'),
-          content: Text('Are you sure you want to send the account creation request?'),
+          title: Text('Confirmer la demande'),
+          content: Text('Êtes-vous sûr de vouloir envoyer la demande de création de compte ?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.pushNamed(context, '/profile');
               },
-              child: Text('No'),
+              child: Text('Non'),
             ),
             TextButton(
               onPressed: () async {
@@ -140,22 +142,26 @@ class _HomeClientState extends State<HomeClient> {
                   setState(() {
                     _hasSentRequest = true;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Demande sent successfully!')),
-                  );
+                  if (mounted) {
+                    ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+                      SnackBar(content: Text('Demande envoyée avec succès !')),
+                    );
+                  }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to send demande: $e')),
-                  );
+                  if (mounted) {
+                    ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+                      SnackBar(content: Text('Échec de l\'envoi de la demande : $e')),
+                    );
+                  }
                 }
               },
-              child: Text('Yes'),
+              child: Text('Oui'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text('Annuler'),
             ),
           ],
         );
@@ -225,8 +231,8 @@ class _HomeClientState extends State<HomeClient> {
       padding: EdgeInsets.zero,
       children: <Widget>[
         UserAccountsDrawerHeader(
-          accountName: Text("Client Name"),
-          accountEmail: Text("client@example.com"),
+          accountName: Text("Nom du Client"),
+          accountEmail: Text("client@exemple.com"),
           currentAccountPicture: CircleAvatar(
             backgroundColor: Colors.white,
             child: Text(
@@ -263,8 +269,7 @@ class _HomeClientState extends State<HomeClient> {
           }
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: 24.0, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16),
           child: Text(
             item,
             style: const TextStyle(fontSize: 18, color: Colors.white),
@@ -277,7 +282,7 @@ class _HomeClientState extends State<HomeClient> {
 
   void _handleNavigation(BuildContext context, String item) {
     switch (item) {
-      case 'Home':
+      case 'Accueil':
         _scrollToSection(0); // Scroll to the top for Home
         break;
       case 'Ouvrir un compte':
@@ -286,10 +291,10 @@ class _HomeClientState extends State<HomeClient> {
       case 'Offre':
         Navigator.pushNamed(context, '/offre');
         break;
-      case 'Reclamation':
+      case 'Réclamation':
         Navigator.pushNamed(context, '/reclamation');
         break;
-      case 'List Reclamation':
+      case 'Liste des Réclamations':
         Navigator.pushNamed(context, '/listreclamation');
         break;
     }
@@ -313,8 +318,7 @@ class _HomeClientState extends State<HomeClient> {
                   children: [
                     Text(
                       'BANQUE PARTICIPATIVE POUR TOUS',
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -368,8 +372,7 @@ class _HomeClientState extends State<HomeClient> {
                   children: [
                     Text(
                       'Devenir Client',
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -409,11 +412,11 @@ class _HomeClientState extends State<HomeClient> {
 }
 
 final List<String> _menuItems = <String>[
-  'Home',
+  'Accueil',
   'Ouvrir un compte',
   'Offre',
-  'Reclamation',
-  'List Reclamation',
+  'Réclamation',
+  'Liste des Réclamations',
 ];
 
 enum Menu { profile, signOut }
@@ -440,11 +443,11 @@ class _ProfileIcon extends StatelessWidget {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
         const PopupMenuItem<Menu>(
           value: Menu.profile,
-          child: Text('Profile'),
+          child: Text('Profil'),
         ),
         const PopupMenuItem<Menu>(
           value: Menu.signOut,
-          child: Text('Sign Out'),
+          child: Text('Déconnexion'),
         ),
       ],
     );
